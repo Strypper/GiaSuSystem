@@ -53,8 +53,8 @@ namespace GiaSuSystem.Models.Actions
                 Lastname = x.Owner.LastName,
                 Price = x.Price,
                 Sub = x.Subject.Name,
-                School = x.School,
-                Date = x.RequestDate
+                Date = x.RequestDate,
+                SchoolSubject = x.SchoolSubject
             }).OrderBy(x => x.Date).Skip(page).Take(10);
             return await request.ToListAsync();
         }
@@ -65,7 +65,7 @@ namespace GiaSuSystem.Models.Actions
             var request = _ctx.RequestSubjects.AsNoTracking()
                         .Include(x => x.Students).Include(y => y.Owner)
                         .Include(z => z.Subject).Include(g => g.LocationAddress)
-                        .Include(h => h.School)
+                        .Include(h => h.SchoolSubject)
                         .FirstOrDefault(x => x.RequestID == id);
             return Ok(request);
         }
@@ -81,7 +81,8 @@ namespace GiaSuSystem.Models.Actions
                 Owner = user,
                 RequestDate = DateTime.Now,
                 LocationAddress = request.Location,
-                Description = request.Description
+                Description = request.Description,
+                SchoolSubject = request.SchoolSubject
             });
             await _ctx.SaveChangesAsync();
             return Ok("Your Subject successfully get to our system");

@@ -12,5 +12,6 @@ namespace GiaSuSystem.Models.Subjects.ModifyFilters
         public LocationInfo Location { get; set; }
         public decimal Price { get; set; }
         public string Description { get; set; }
+        public School SchoolSubject { get; set; }
     }
 }

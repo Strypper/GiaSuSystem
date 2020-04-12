@@ -13,7 +13,7 @@ namespace GiaSuSystem.Models.Subjects.ModifyFilters
          public string Lastname { get; set; }
          public decimal Price { get; set; }
          public string Sub { get; set; }
-         public School School { get; set; }
+         public School SchoolSubject { get; set; }
          public DateTime Date { get; set; }
     }
 }
