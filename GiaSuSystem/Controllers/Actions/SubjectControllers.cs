@@ -54,7 +54,7 @@ namespace GiaSuSystem.Models.Actions
                 Price = x.Price,
                 Sub = x.Subject.Name,
                 Date = x.RequestDate,
-                SchoolSubject = x.SchoolSubject
+                SchoolSubjectName = x.SchoolSubject.SchoolName
             }).OrderBy(x => x.Date).Skip(page).Take(10);
             return await request.ToListAsync();
         }
@@ -66,7 +66,7 @@ namespace GiaSuSystem.Models.Actions
                         .Include(x => x.Students).Include(y => y.Owner)
                         .Include(z => z.Subject).Include(g => g.LocationAddress)
                         .Include(h => h.SchoolSubject)
-                        .FirstOrDefault(x => x.RequestID == id);
+                        .FirstOrDefault(z => z.RequestID == id);
             return Ok(request);
         }
         [HttpPost]

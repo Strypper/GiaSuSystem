@@ -79,8 +79,10 @@ namespace GiaSuSystem.Controllers
         {
             School sc = new School();
             sc.SchoolName = u.SchoolName;
-            sc.City = u.City;
-            sc.District = u.SchoolDistrict;
+            if (u.SchoolName != null){
+                sc.City = u.City;
+                sc.District = u.SchoolDistrict;
+            }
             var user = new UserModel
             {
                 UserName = u.UserName,
@@ -128,7 +130,7 @@ namespace GiaSuSystem.Controllers
                 user.Address,
                 user.District,
                 user.City,
-                user.School,
+                user.School.SchoolName,
                 user.Department,
             };
         }

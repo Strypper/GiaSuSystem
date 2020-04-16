@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GiaSuSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20200403083515_Update Unicode")]
-    partial class UpdateUnicode
+    [Migration("20200416023335_Version 1.0.0")]
+    partial class Version100
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -146,12 +146,14 @@ namespace GiaSuSystem.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<int?>("LocationAddressLocationId")
+                    b.Property<int>("LocationAddressLocationId")
                         .HasColumnType("int");
 
                     b.Property<string>("OwnerId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("Price")
@@ -160,7 +162,11 @@ namespace GiaSuSystem.Migrations
                     b.Property<DateTime>("RequestDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("SubjectID")
+                    b.Property<int?>("SchoolID")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<int>("SubjectID")
                         .HasColumnType("int");
 
                     b.HasKey("RequestID");
@@ -169,9 +175,38 @@ namespace GiaSuSystem.Migrations
 
                     b.HasIndex("OwnerId");
 
+                    b.HasIndex("SchoolID");
+
                     b.HasIndex("SubjectID");
 
                     b.ToTable("RequestSubjects");
+                });
+
+            modelBuilder.Entity("GiaSuSystem.Models.Subjects.School", b =>
+                {
+                    b.Property<int>("SchoolID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("District")
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("SchoolAddress")
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("SchoolLogo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SchoolName")
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("SchoolID");
+
+                    b.ToTable("Schools");
                 });
 
             modelBuilder.Entity("GiaSuSystem.Models.Subjects.Subject", b =>
@@ -187,10 +222,15 @@ namespace GiaSuSystem.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("School")
-                        .HasColumnType("nvarchar(70)");
+                    b.Property<int?>("SchoolID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Teacher")
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("SubjectID");
+
+                    b.HasIndex("SchoolID");
 
                     b.ToTable("Subjects");
                 });
@@ -205,14 +245,14 @@ namespace GiaSuSystem.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<byte>("Age")
                         .HasColumnType("tinyint");
 
                     b.Property<string>("City")
                         .IsRequired()
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -229,7 +269,7 @@ namespace GiaSuSystem.Migrations
 
                     b.Property<string>("District")
                         .IsRequired()
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(256)")
@@ -240,14 +280,14 @@ namespace GiaSuSystem.Migrations
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("varchar(10)");
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<bool>("Gender")
                         .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("varchar(10)");
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -273,16 +313,18 @@ namespace GiaSuSystem.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("ProfileImageUrl")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("RequestSubjectRequestID")
                         .HasColumnType("int");
 
                     b.Property<string>("Role")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("School")
-                        .HasColumnType("varchar(50)");
+                    b.Property<int?>("SchoolID")
+                        .HasColumnType("int");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -305,6 +347,8 @@ namespace GiaSuSystem.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.HasIndex("RequestSubjectRequestID");
+
+                    b.HasIndex("SchoolID");
 
                     b.ToTable("AspNetUsers");
                 });
@@ -472,15 +516,34 @@ namespace GiaSuSystem.Migrations
                 {
                     b.HasOne("GiaSuSystem.Models.Location.LocationInfo", "LocationAddress")
                         .WithMany()
-                        .HasForeignKey("LocationAddressLocationId");
+                        .HasForeignKey("LocationAddressLocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("GiaSuSystem.Models.User.UserModel", "Owner")
                         .WithMany()
-                        .HasForeignKey("OwnerId");
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GiaSuSystem.Models.Subjects.School", "SchoolSubject")
+                        .WithMany()
+                        .HasForeignKey("SchoolID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("GiaSuSystem.Models.Subjects.Subject", "Subject")
                         .WithMany()
-                        .HasForeignKey("SubjectID");
+                        .HasForeignKey("SubjectID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("GiaSuSystem.Models.Subjects.Subject", b =>
+                {
+                    b.HasOne("GiaSuSystem.Models.Subjects.School", "School")
+                        .WithMany()
+                        .HasForeignKey("SchoolID");
                 });
 
             modelBuilder.Entity("GiaSuSystem.Models.User.UserModel", b =>
@@ -488,6 +551,10 @@ namespace GiaSuSystem.Migrations
                     b.HasOne("GiaSuSystem.Models.Subjects.RequestSubject", null)
                         .WithMany("Students")
                         .HasForeignKey("RequestSubjectRequestID");
+
+                    b.HasOne("GiaSuSystem.Models.Subjects.School", "School")
+                        .WithMany()
+                        .HasForeignKey("SchoolID");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

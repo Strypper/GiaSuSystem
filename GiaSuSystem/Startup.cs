@@ -37,8 +37,8 @@ namespace GiaSuSystem
             services.Configure<AppSettings>(Configuration.GetSection("ApplicationSettings"));
             services.AddControllers().AddNewtonsoftJson();
             services.AddDbContextPool<AppDbContext>(options =>
-                                    options.UseSqlServer
-                                    (Configuration.GetConnectionString("DefaultConnection")));
+                                                    options.UseSqlServer
+                                                   (Configuration.GetConnectionString("DefaultConnection")));
             services.AddIdentity<UserModel, IdentityRole>(options => {
                 options.Password.RequireDigit = true;
                 options.Password.RequireLowercase = true;

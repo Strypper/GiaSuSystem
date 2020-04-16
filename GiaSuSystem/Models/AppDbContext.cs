@@ -9,6 +9,8 @@ using GiaSuSystem.Models.Location.Menu;
 using GiaSuSystem.Models.Subjects;
 using GiaSuSystem.Models.Location;
 using GiaSuSystem.Models.Media;
+using GiaSuSystem.Models.MMTables;
+using Microsoft.AspNetCore.Identity;
 
 namespace GiaSuSystem.Models
 {
@@ -27,5 +29,28 @@ namespace GiaSuSystem.Models
         public DbSet<LocationImage> LocationImages { get; set; }
 
         public DbSet<School> Schools { get; set; }
+        //Many to Many Relationship
+        public DbSet<UserModelRequestSubject> UserModelRequestSubjects { get; set; }
+
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            
+            base.OnModelCreating(builder);
+
+            builder.Entity<UserModelRequestSubject>()
+                   .HasKey(ur => new { ur.UserId, ur.RequestId });
+
+            builder.Entity<UserModelRequestSubject>()
+                .HasOne(ur => ur.User)
+                .WithMany(u => u.UserSubjectRequests)
+                .HasForeignKey(ur => ur.UserId);
+
+
+            builder.Entity<UserModelRequestSubject>()
+                .HasOne(ur => ur.Request)
+                .WithMany(r => r.Students)
+                .HasForeignKey(ur => ur.RequestId);
+        }
     }
 }

@@ -144,12 +144,14 @@ namespace GiaSuSystem.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<int?>("LocationAddressLocationId")
+                    b.Property<int>("LocationAddressLocationId")
                         .HasColumnType("int");
 
                     b.Property<string>("OwnerId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("Price")
@@ -159,9 +161,10 @@ namespace GiaSuSystem.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("SchoolID")
+                        .IsRequired()
                         .HasColumnType("int");
 
-                    b.Property<int?>("SubjectID")
+                    b.Property<int>("SubjectID")
                         .HasColumnType("int");
 
                     b.HasKey("RequestID");
@@ -308,12 +311,14 @@ namespace GiaSuSystem.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("ProfileImageUrl")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("RequestSubjectRequestID")
                         .HasColumnType("int");
 
                     b.Property<string>("Role")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("SchoolID")
@@ -509,19 +514,27 @@ namespace GiaSuSystem.Migrations
                 {
                     b.HasOne("GiaSuSystem.Models.Location.LocationInfo", "LocationAddress")
                         .WithMany()
-                        .HasForeignKey("LocationAddressLocationId");
+                        .HasForeignKey("LocationAddressLocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("GiaSuSystem.Models.User.UserModel", "Owner")
                         .WithMany()
-                        .HasForeignKey("OwnerId");
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("GiaSuSystem.Models.Subjects.School", "School")
+                    b.HasOne("GiaSuSystem.Models.Subjects.School", "SchoolSubject")
                         .WithMany()
-                        .HasForeignKey("SchoolID");
+                        .HasForeignKey("SchoolID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("GiaSuSystem.Models.Subjects.Subject", "Subject")
                         .WithMany()
-                        .HasForeignKey("SubjectID");
+                        .HasForeignKey("SubjectID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("GiaSuSystem.Models.Subjects.Subject", b =>

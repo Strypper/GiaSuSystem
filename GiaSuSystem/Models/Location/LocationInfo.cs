@@ -23,11 +23,11 @@ namespace GiaSuSystem.Models.Location
         public string District { get; set; }
         [Column(TypeName = "nvarchar(100)")]
         public string Street { get; set; }
-        public ICollection<LocationImage> ImagePaths { get; set; }
+        public virtual ICollection<LocationImage> ImagePaths { get; set; }
         public UserModel Owner { get; set; }
         public ServiceType Type { get; set; }
-        public ICollection<Food> Foods { get; set; }
-        public ICollection<Drink> Drinks { get; set; }
+        public virtual ICollection<Food> Foods { get; set; }
+        public virtual ICollection<Drink> Drinks { get; set; }
         [Column(TypeName = "tinyint")]
         public int Rating { get; set; }
     }

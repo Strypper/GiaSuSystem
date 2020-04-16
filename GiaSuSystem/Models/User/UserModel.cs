@@ -1,4 +1,5 @@
-﻿using GiaSuSystem.Models.Subjects;
+﻿using GiaSuSystem.Models.MMTables;
+using GiaSuSystem.Models.Subjects;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace GiaSuSystem.Models.User
         public static object Claims { get; internal set; }
         [NotMapped]
         public string Pass { get; set; }
+        [Required]
         public string Role { get; set; }
         [Required]
         [Column(TypeName = "nvarchar(10)")]
@@ -21,6 +23,7 @@ namespace GiaSuSystem.Models.User
         [Required]
         [Column(TypeName = "nvarchar(10)")]
         public string LastName { get; set; }
+        [Required]
         public string ProfileImageUrl { get; set; }
         public string CoverImageUrl { get; set; }
         [Column(TypeName = "date")]
@@ -31,6 +34,7 @@ namespace GiaSuSystem.Models.User
         [Range(18, 60, ErrorMessage = "Your Age Must Older Than 18")]
         [Column(TypeName = "tinyint")]
         public int Age { get; set; }
+        [ForeignKey("SchoolID")]
         public School School { get; set; }
         [Required]
         [Column(TypeName = "nvarchar(50)")]
@@ -42,5 +46,6 @@ namespace GiaSuSystem.Models.User
         [Column(TypeName = "nvarchar(50)")]
         public string District { get; set; }
         public Department Department { get; set; }
+        public virtual ICollection<UserModelRequestSubject> UserSubjectRequests { get; set; }
     }
 }
