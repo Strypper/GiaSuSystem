@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace GiaSuSystem.Models.User
 {
-    public class UserModel : IdentityUser
+    public class UserModel : IdentityUser<int>
     {
         public static object Claims { get; internal set; }
         [NotMapped]
@@ -34,18 +34,18 @@ namespace GiaSuSystem.Models.User
         [Range(18, 60, ErrorMessage = "Your Age Must Older Than 18")]
         [Column(TypeName = "tinyint")]
         public int Age { get; set; }
-        [ForeignKey("SchoolID")]
-        public School School { get; set; }
         [Required]
         [Column(TypeName = "nvarchar(50)")]
-        public string Address { get; set; }
+        public string UserAddress { get; set; }
         [Required]
         [Column(TypeName = "nvarchar(50)")]
-        public string City { get; set; }
+        public string UserCity { get; set; }
         [Required]
         [Column(TypeName = "nvarchar(50)")]
-        public string District { get; set; }
+        public string UserDistrict { get; set; }
         public Department Department { get; set; }
         public virtual ICollection<UserModelRequestSubject> UserSubjectRequests { get; set; }
+        [ForeignKey("SchoolID")]
+        public int SchoolID { get; set; }
     }
 }

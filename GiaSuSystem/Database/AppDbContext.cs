@@ -12,9 +12,9 @@ using GiaSuSystem.Models.Media;
 using GiaSuSystem.Models.MMTables;
 using Microsoft.AspNetCore.Identity;
 
-namespace GiaSuSystem.Models
+namespace GiaSuSystem.Database
 {
-    public class AppDbContext : IdentityDbContext<UserModel>
+    public class AppDbContext : IdentityDbContext<UserModel, IdentityRole<int>, int>
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 

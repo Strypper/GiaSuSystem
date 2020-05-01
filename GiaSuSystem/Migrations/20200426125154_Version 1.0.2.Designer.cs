@@ -4,14 +4,16 @@ using GiaSuSystem.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GiaSuSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200426125154_Version 1.0.2")]
+    partial class Version102
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -162,17 +164,8 @@ namespace GiaSuSystem.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("LearningAddress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LearningCity")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LearningDistrict")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("LocationAddressLocationId")
+                        .HasColumnType("int");
 
                     b.Property<int?>("OwnerId")
                         .HasColumnType("int");
@@ -183,7 +176,8 @@ namespace GiaSuSystem.Migrations
                     b.Property<DateTime>("RequestDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("SchoolSubject")
+                    b.Property<int?>("SchoolID")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<int>("SubjectID")
@@ -191,7 +185,11 @@ namespace GiaSuSystem.Migrations
 
                     b.HasKey("RequestID");
 
+                    b.HasIndex("LocationAddressLocationId");
+
                     b.HasIndex("OwnerId");
+
+                    b.HasIndex("SchoolID");
 
                     b.HasIndex("SubjectID");
 
@@ -539,9 +537,21 @@ namespace GiaSuSystem.Migrations
 
             modelBuilder.Entity("GiaSuSystem.Models.Subjects.RequestSubject", b =>
                 {
+                    b.HasOne("GiaSuSystem.Models.Location.LocationInfo", "LocationAddress")
+                        .WithMany()
+                        .HasForeignKey("LocationAddressLocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("GiaSuSystem.Models.User.UserModel", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId");
+
+                    b.HasOne("GiaSuSystem.Models.Subjects.School", "SchoolSubject")
+                        .WithMany()
+                        .HasForeignKey("SchoolID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("GiaSuSystem.Models.Subjects.Subject", "Subject")
                         .WithMany()

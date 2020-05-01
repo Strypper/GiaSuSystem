@@ -1,4 +1,6 @@
-﻿using GiaSuSystem.Models.Subjects;
+﻿using GiaSuSystem.Database;
+using GiaSuSystem.Models.Location;
+using GiaSuSystem.Models.Subjects;
 using GiaSuSystem.Models.Subjects.ModifyFilters;
 using GiaSuSystem.Models.User;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -54,19 +56,18 @@ namespace GiaSuSystem.Models.Actions
                 Price = x.Price,
                 Sub = x.Subject.Name,
                 Date = x.RequestDate,
-                SchoolSubjectName = x.SchoolSubject.SchoolName
+                //SchoolSubjectName = x.SchoolSubject.SchoolName
             }).OrderBy(x => x.Date).Skip(page).Take(10);
             return await request.ToListAsync();
         }
         [HttpGet("{id}")]
-        public IActionResult RequestDetail(int id)
+        public async Task<IActionResult> RequestDetail(int id)
         {
             //Object type will return null, remember to include all of them
-            var request = _ctx.RequestSubjects.AsNoTracking()
+            var request = await _ctx.RequestSubjects.AsNoTracking()
                         .Include(x => x.Students).Include(y => y.Owner)
-                        .Include(z => z.Subject).Include(g => g.LocationAddress)
-                        .Include(h => h.SchoolSubject)
-                        .FirstOrDefault(z => z.RequestID == id);
+                        .Include(z => z.Subject)
+                        .FirstOrDefaultAsync(z => z.RequestID == id);
             return Ok(request);
         }
         [HttpPost]
@@ -74,15 +75,34 @@ namespace GiaSuSystem.Models.Actions
         {
             string userId = User.Claims.First(c => c.Type == "UserID").Value;
             var user = await _userManager.FindByIdAsync(userId);
+            School _Sc = new School();
+            if (request.SchoolID != null)
+            {
+                if (_ctx.Schools.AsNoTracking().FirstOrDefault(s => s.SchoolID == request.SchoolID) is School sc)
+                {
+                    _Sc.SchoolID = sc.SchoolID;
+                }
+            }
+            else
+            {
+                _Sc.SchoolName = request.SchoolName;
+                _Sc.SchoolAddress = request.SchoolAddress;
+                _Sc.District = request.SchoolDistrict;
+                _Sc.City = request.SchoolCity;
+                _ctx.Schools.Add(_Sc);
+                await _ctx.SaveChangesAsync();
+            }
             _ctx.RequestSubjects.Add(new RequestSubject
             {
                 Subject = request.Subject,
                 Price = request.Price,
                 Owner = user,
                 RequestDate = DateTime.Now,
-                LocationAddress = request.Location,
+                LearningAddress = request.LearningAddress,
+                LearningDistrict = request.LearningDistrict,
+                LearningCity = request.LearningCity,
                 Description = request.Description,
-                SchoolSubject = request.SchoolSubject
+                SchoolSubject = _Sc.SchoolID,
             });
             await _ctx.SaveChangesAsync();
             return Ok("Your Subject successfully get to our system");

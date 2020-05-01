@@ -1,4 +1,5 @@
-﻿using GiaSuSystem.Models;
+﻿using GiaSuSystem.Database;
+using GiaSuSystem.Models;
 using GiaSuSystem.Models.Subjects;
 using GiaSuSystem.Models.Subjects.ModifyFilters;
 using GiaSuSystem.Models.User;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -24,14 +26,17 @@ namespace GiaSuSystem.Controllers
     [Route("api/[controller]/[action]")]
     public class LoginRegister : ControllerBase
     {
+        private AppDbContext _ctx;
         private UserManager<UserModel> _userManager;
         private SignInManager<UserModel> _signInManager;
         private readonly AppSettings _appsettings;
 
         public LoginRegister(UserManager<UserModel> userManager,
                              SignInManager<UserModel> signInManager,
-                             IOptions<AppSettings> appsettings)
+                             IOptions<AppSettings> appsettings,
+                             AppDbContext ctx)
         {
+            _ctx = ctx;
             _userManager = userManager;
             _signInManager = signInManager;
             _appsettings = appsettings.Value;
@@ -77,12 +82,23 @@ namespace GiaSuSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> Register([FromBody]RegisterUser u)
         {
-            School sc = new School();
-            sc.SchoolName = u.SchoolName;
-            if (u.SchoolName != null){
-                sc.City = u.City;
-                sc.District = u.SchoolDistrict;
+            School _Sc = new School();
+            _Sc.SchoolName = u.SchoolName;
+            if (u.SchoolName != null)
+            {
+                if(_ctx.Schools.Any(s => s.SchoolName == u.SchoolName))
+                {
+                    return BadRequest("The School Already Exist, please recheck the School we include. Or you can just add your school later 😁");
+                }
+                else
+                {
+                    _Sc.City = u.SchoolCity;
+                    _Sc.District = u.SchoolDistrict;
+                    _ctx.Schools.Add(_Sc);
+                    await _ctx.SaveChangesAsync();
+                }
             }
+
             var user = new UserModel
             {
                 UserName = u.UserName,
@@ -94,12 +110,12 @@ namespace GiaSuSystem.Controllers
                 Age = u.Age,
                 FirstName = u.FirstName,
                 LastName = u.LastName,
-                Address = u.Address,
-                District = u.District,
-                City = u.City,
-                School = sc,
+                UserAddress = u.Address,
+                UserDistrict = u.District,
+                UserCity = u.City,
                 ProfileImageUrl = u.ProfileImageUrl,
-                Department = u.Department
+                Department = u.Department,
+                SchoolID = _Sc.SchoolID
             };
             var result = await _userManager.CreateAsync(user, u.Pass);
             await _userManager.AddToRoleAsync(user, u.Role);
@@ -108,7 +124,7 @@ namespace GiaSuSystem.Controllers
             {
                 return Ok("Your Profile Have set-up correctly !!");
             }
-            return NotFound("There is something wrong");
+            return NotFound("There is something wrong, The Email or UserName must be conflict with someone else");
         }
         [HttpGet]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -116,6 +132,7 @@ namespace GiaSuSystem.Controllers
         {
             string userId = User.Claims.First(c => c.Type == "UserID").Value;
             var user = await _userManager.FindByIdAsync(userId);
+            var school = await _ctx.Schools.AsNoTracking().FirstOrDefaultAsync(z => z.SchoolID == user.SchoolID);
             return new
             {
                 user.UserName,
@@ -127,11 +144,12 @@ namespace GiaSuSystem.Controllers
                 user.ProfileImageUrl,
                 user.CoverImageUrl,
                 user.Age,
-                user.Address,
-                user.District,
-                user.City,
-                user.School.SchoolName,
+                user.UserAddress,
+                user.UserDistrict,
+                user.UserCity,
                 user.Department,
+                user.UserSubjectRequests,
+                school
             };
         }
     }

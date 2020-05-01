@@ -10,8 +10,7 @@ namespace GiaSuSystem.Models.MMTables
 {
     public class UserModelRequestSubject
     {
-        [MaxLength(450), Required]
-        public string UserId { get; set; }
+        public int UserId { get; set; }
         public UserModel User { get; set; }
 
         public int RequestId { get; set; }

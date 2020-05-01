@@ -19,17 +19,20 @@ namespace GiaSuSystem.Models.Subjects
         public virtual ICollection<UserModelRequestSubject> Students { get; set; }
         [Required]
         public decimal Price { get; set; }
-        [Required]
         public UserModel Owner { get; set; }
         [Required]
         public DateTime RequestDate { get; set; }
         [Required]
-        public LocationInfo LocationAddress { get; set; }
+        public string LearningAddress { get; set; }
+        [Required]
+        public string LearningDistrict { get; set; }
+        [Required]
+        public string LearningCity { get; set; }
         [Column(TypeName = "nvarchar(200)")]
         [Required]
         public string Description { get; set; }
         [Required]
         [ForeignKey("SchoolID")]
-        public School SchoolSubject { get; set; }
+        public int SchoolSubject { get; set; }
     }
 }

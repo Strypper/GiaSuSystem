@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GiaSuSystem.Database;
 using GiaSuSystem.Models;
 using GiaSuSystem.Models.User;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -39,7 +40,7 @@ namespace GiaSuSystem
             services.AddDbContextPool<AppDbContext>(options =>
                                                     options.UseSqlServer
                                                    (Configuration.GetConnectionString("DefaultConnection")));
-            services.AddIdentity<UserModel, IdentityRole>(options => {
+            services.AddIdentity<UserModel, IdentityRole<int>>(options => {
                 options.Password.RequireDigit = true;
                 options.Password.RequireLowercase = true;
                 options.Password.RequireUppercase = true;

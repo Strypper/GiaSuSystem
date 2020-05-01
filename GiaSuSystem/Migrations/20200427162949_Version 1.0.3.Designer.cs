@@ -4,14 +4,16 @@ using GiaSuSystem.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GiaSuSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200427162949_Version 1.0.3")]
+    partial class Version103
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -162,17 +164,8 @@ namespace GiaSuSystem.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("LearningAddress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LearningCity")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LearningDistrict")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("LocationAddressLocationId")
+                        .HasColumnType("int");
 
                     b.Property<int?>("OwnerId")
                         .HasColumnType("int");
@@ -190,6 +183,8 @@ namespace GiaSuSystem.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("RequestID");
+
+                    b.HasIndex("LocationAddressLocationId");
 
                     b.HasIndex("OwnerId");
 
@@ -539,6 +534,12 @@ namespace GiaSuSystem.Migrations
 
             modelBuilder.Entity("GiaSuSystem.Models.Subjects.RequestSubject", b =>
                 {
+                    b.HasOne("GiaSuSystem.Models.Location.LocationInfo", "LocationAddress")
+                        .WithMany()
+                        .HasForeignKey("LocationAddressLocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("GiaSuSystem.Models.User.UserModel", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId");
