@@ -38,12 +38,15 @@ namespace GiaSuSystem.Models.User
         [Column(TypeName = "nvarchar(50)")]
         public string UserAddress { get; set; }
         [Required]
-        [Column(TypeName = "nvarchar(50)")]
-        public string UserCity { get; set; }
+        [ForeignKey("CityID")]
+        public int UserCity { get; set; }
         [Required]
-        [Column(TypeName = "nvarchar(50)")]
-        public string UserDistrict { get; set; }
-        public Department Department { get; set; }
+        [ForeignKey("DistrictID")]
+        public int UserDistrict { get; set; }
+        [ForeignKey("StudyGroupID")]
+        public int StudyGroupID { get; set; }
+        [ForeignKey("StudyFieldID")]
+        public int StudyFieldID { get; set; }
         public virtual ICollection<UserModelRequestSubject> UserSubjectRequests { get; set; }
         [ForeignKey("SchoolID")]
         public int SchoolID { get; set; }

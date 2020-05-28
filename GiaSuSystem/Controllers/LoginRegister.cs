@@ -60,7 +60,6 @@ namespace GiaSuSystem.Controllers
                             new Claim("UserID",user.Id.ToString()),
                             new Claim(_options.ClaimsIdentity.RoleClaimType, role.FirstOrDefault())
                         }),
-
                         Issuer = "null",
                         Audience = "null",
                         IssuedAt = DateTime.UtcNow,
@@ -78,25 +77,25 @@ namespace GiaSuSystem.Controllers
             }
             return NotFound("The user does not exist pls create Account");
         }
-
         [HttpPost]
         public async Task<IActionResult> Register([FromBody]RegisterUser u)
         {
             School _Sc = new School();
-            _Sc.SchoolName = u.SchoolName;
-            if (u.SchoolName != null)
+            if (u.SchoolID.HasValue)
             {
-                if(_ctx.Schools.Any(s => s.SchoolName == u.SchoolName))
+                if(_ctx.Schools.AsNoTracking().FirstOrDefault(s => s.SchoolID == u.SchoolID) is School sc)
                 {
-                    return BadRequest("The School Already Exist, please recheck the School we include. Or you can just add your school later 😁");
+                    _Sc.SchoolID = sc.SchoolID;
                 }
-                else
-                {
-                    _Sc.City = u.SchoolCity;
-                    _Sc.District = u.SchoolDistrict;
-                    _ctx.Schools.Add(_Sc);
-                    await _ctx.SaveChangesAsync();
-                }
+            }
+            else
+            {
+                _Sc.SchoolName = u.SchoolName;
+                _Sc.City = u.SchoolCity;
+                _Sc.District = u.SchoolDistrict;
+                _Sc.SchoolAddress = u.SchoolAddress;
+                _ctx.Schools.Add(_Sc);
+                await _ctx.SaveChangesAsync();
             }
 
             var user = new UserModel
@@ -114,8 +113,9 @@ namespace GiaSuSystem.Controllers
                 UserDistrict = u.District,
                 UserCity = u.City,
                 ProfileImageUrl = u.ProfileImageUrl,
-                Department = u.Department,
-                SchoolID = _Sc.SchoolID
+                SchoolID = _Sc.SchoolID,
+                StudyGroupID = u.StudyGroup,
+                StudyFieldID = u.StudyField
             };
             var result = await _userManager.CreateAsync(user, u.Pass);
             await _userManager.AddToRoleAsync(user, u.Role);
@@ -132,7 +132,7 @@ namespace GiaSuSystem.Controllers
         {
             string userId = User.Claims.First(c => c.Type == "UserID").Value;
             var user = await _userManager.FindByIdAsync(userId);
-            var school = await _ctx.Schools.AsNoTracking().FirstOrDefaultAsync(z => z.SchoolID == user.SchoolID);
+            var SchoolInfo = await _ctx.Schools.AsNoTracking().FirstOrDefaultAsync(z => z.SchoolID == user.SchoolID);
             return new
             {
                 user.UserName,
@@ -147,9 +147,11 @@ namespace GiaSuSystem.Controllers
                 user.UserAddress,
                 user.UserDistrict,
                 user.UserCity,
-                user.Department,
                 user.UserSubjectRequests,
-                school
+                SchoolInfo.SchoolID,
+                SchoolInfo.SchoolName,
+                SchoolInfo.SchoolAddress,
+                SchoolInfo.SchoolLogo
             };
         }
     }

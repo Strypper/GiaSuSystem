@@ -17,6 +17,7 @@ namespace GiaSuSystem.Models.Subjects
         [Required]
         public Subject Subject { get; set; }
         public virtual ICollection<UserModelRequestSubject> Students { get; set; }
+        public virtual ICollection<RequestSubjectSchedule> RequestSchedules { get; set; }
         [Required]
         public decimal Price { get; set; }
         public UserModel Owner { get; set; }
@@ -25,14 +26,19 @@ namespace GiaSuSystem.Models.Subjects
         [Required]
         public string LearningAddress { get; set; }
         [Required]
-        public string LearningDistrict { get; set; }
+        [ForeignKey("DistrictID")]
+        public int LearningDistrict { get; set; }
         [Required]
-        public string LearningCity { get; set; }
+        [ForeignKey("CityID")]
+        public int LearningCity { get; set; }
         [Column(TypeName = "nvarchar(200)")]
         [Required]
         public string Description { get; set; }
-        [Required]
-        [ForeignKey("SchoolID")]
-        public int SchoolSubject { get; set; }
+        [Column(TypeName = "bit")]
+        public bool HomeWork { get; set; }
+        [Column(TypeName = "bit")]
+        public bool Presentation { get; set; }
+        [Column(TypeName = "bit")]
+        public bool Laboratory { get; set; }
     }
 }

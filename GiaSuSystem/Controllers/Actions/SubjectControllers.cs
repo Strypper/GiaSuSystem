@@ -43,32 +43,71 @@ namespace GiaSuSystem.Models.Actions
         }
         [AllowAnonymous]
         [HttpGet("{page}")]
-        public async Task<IEnumerable<RequestPage>> RequestPage(int page)
+        public async Task<IActionResult> RequestPage(int page)
         {
             page = page * 10;
-            var request = _ctx.RequestSubjects.AsNoTracking()
-                              .Select(x => new RequestPage()
-            {
-                RequestID = x.RequestID,
-                ProfileUrlImage = x.Owner.ProfileImageUrl,
-                Firstname = x.Owner.FirstName,
-                Lastname = x.Owner.LastName,
-                Price = x.Price,
-                Sub = x.Subject.Name,
-                Date = x.RequestDate,
-                //SchoolSubjectName = x.SchoolSubject.SchoolName
-            }).OrderBy(x => x.Date).Skip(page).Take(10);
-            return await request.ToListAsync();
+            var result = from Subject in _ctx.RequestSubjects.AsNoTracking().OrderBy(x => x.RequestDate).Skip(page).Take(10)
+                         join scName in _ctx.Schools on Subject.Subject.SchoolID equals scName.SchoolID into RequestPage
+                         from m in RequestPage.DefaultIfEmpty()
+                         select new
+                         {
+                             RequestID = Subject.RequestID,
+                             ProfileUrlImage = Subject.Owner.ProfileImageUrl,
+                             Firstname = Subject.Owner.FirstName,
+                             Lastname = Subject.Owner.LastName,
+                             Price = Subject.Price,
+                             Sub = Subject.Subject.Name,
+                             Date = Subject.RequestDate,
+                             SchoolName = m.SchoolName
+                         };
+            return Ok(await result.AsNoTracking().ToListAsync());
         }
+        [AllowAnonymous]
         [HttpGet("{id}")]
-        public async Task<IActionResult> RequestDetail(int id)
+        public async Task<Object> RequestDetail(int id)
         {
             //Object type will return null, remember to include all of them
             var request = await _ctx.RequestSubjects.AsNoTracking()
-                        .Include(x => x.Students).Include(y => y.Owner)
+                        .Include(x => x.Students)
                         .Include(z => z.Subject)
                         .FirstOrDefaultAsync(z => z.RequestID == id);
-            return Ok(request);
+            var schoolsubject = await _ctx.Schools.AsNoTracking()
+                                      .FirstAsync(x => x.SchoolID == request.Subject.SchoolID);
+            var studygroup = await _ctx.StudyGroups.AsNoTracking()
+                          .FirstAsync(x => x.StudyGroupID == request.Subject.StudyGroupID);
+            var studyfield = await _ctx.StudyFields.AsNoTracking()
+                          .FirstAsync(x => x.StudyFieldID == request.Subject.StudyFieldID);
+            var learningdistrict = await _ctx.Districts.AsNoTracking()
+                          .FirstAsync(x => x.DistrictID == request.LearningDistrict);
+            var learningcity = await _ctx.Cities.AsNoTracking()
+                          .FirstAsync(x => x.CityID == request.LearningCity);
+            var scd = await _ctx.Districts.AsNoTracking()
+                          .FirstAsync(x => x.DistrictID == schoolsubject.District);
+            var scc = await _ctx.Cities.AsNoTracking()
+                          .FirstAsync(x => x.CityID == schoolsubject.City);
+            string schooldistrict = scd.DistrictName;
+            string schoolcity = scc.CityName;
+            return new
+            {
+                request.Subject.Name,
+                studygroup.StudyGroupName,
+                studyfield.StudyFieldName,
+                request.Description,
+                request.Price,
+                request.LearningAddress,
+                learningdistrict.DistrictName,
+                learningcity.CityName,
+                request.Students,
+                request.HomeWork,
+                request.Presentation,
+                request.Laboratory,
+                request.RequestDate,
+                request.Subject.Teacher,
+                schoolsubject.SchoolName,
+                schoolsubject.SchoolLogo,
+                schoolsubject.SchoolAddress,
+                schooldistrict,schoolcity
+            };
         }
         [HttpPost]
         public async Task<IActionResult> CreateRequest([FromBody]CreateRequest request)
@@ -76,11 +115,16 @@ namespace GiaSuSystem.Models.Actions
             string userId = User.Claims.First(c => c.Type == "UserID").Value;
             var user = await _userManager.FindByIdAsync(userId);
             School _Sc = new School();
-            if (request.SchoolID != null)
+            Subject _Sj = new Subject();
+            _Sj.Name = request.SubjectName;
+            _Sj.Teacher = request.SubjectTeacher;
+            _Sj.StudyGroupID = request.StudyGroup;
+            _Sj.StudyFieldID = request.StudyField;
+            if (request.SchoolID.HasValue)
             {
                 if (_ctx.Schools.AsNoTracking().FirstOrDefault(s => s.SchoolID == request.SchoolID) is School sc)
                 {
-                    _Sc.SchoolID = sc.SchoolID;
+                    _Sj.SchoolID = sc.SchoolID;
                 }
             }
             else
@@ -91,10 +135,11 @@ namespace GiaSuSystem.Models.Actions
                 _Sc.City = request.SchoolCity;
                 _ctx.Schools.Add(_Sc);
                 await _ctx.SaveChangesAsync();
+                _Sj.SchoolID = _Sc.SchoolID;
             }
             _ctx.RequestSubjects.Add(new RequestSubject
             {
-                Subject = request.Subject,
+                Subject = _Sj,
                 Price = request.Price,
                 Owner = user,
                 RequestDate = DateTime.Now,
@@ -102,10 +147,40 @@ namespace GiaSuSystem.Models.Actions
                 LearningDistrict = request.LearningDistrict,
                 LearningCity = request.LearningCity,
                 Description = request.Description,
-                SchoolSubject = _Sc.SchoolID,
+                HomeWork = request.HomeWork,
+                Presentation = request.Presentation,
+                Laboratory = request.Laboratory
             });
             await _ctx.SaveChangesAsync();
             return Ok("Your Subject successfully get to our system");
+        }
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> StudyGroupList()
+        {
+            var studygroup = await _ctx.StudyGroups
+                               .AsNoTracking().ToListAsync();
+            return Ok(studygroup);
+        }
+        [AllowAnonymous]
+        [HttpGet("{group}")]
+        public async Task<IActionResult> StudyFieldList(int group)
+        {
+            var studyFields = await _ctx.StudyFields
+                                      .AsNoTracking()
+                                      .Where(x => x.StudyGroupID == group)
+                                      .ToListAsync();
+            return Ok(studyFields);
+        }
+        [AllowAnonymous]
+        [HttpGet("{district}")]
+        public async Task<IActionResult> SchoolList(int district)
+        {
+            var schools = await _ctx.Schools
+                                      .AsNoTracking()
+                                      .Where(x => x.District == district)
+                                      .ToListAsync();
+            return Ok(schools);
         }
     }
 }

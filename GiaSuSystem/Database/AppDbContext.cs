@@ -11,6 +11,8 @@ using GiaSuSystem.Models.Location;
 using GiaSuSystem.Models.Media;
 using GiaSuSystem.Models.MMTables;
 using Microsoft.AspNetCore.Identity;
+using GiaSuSystem.Models.EducationSystem;
+using GiaSuSystem.Models.Location.VietNam;
 
 namespace GiaSuSystem.Database
 {
@@ -25,10 +27,18 @@ namespace GiaSuSystem.Database
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<RequestSubject> RequestSubjects { get; set; }
         //Location
+        public DbSet<City> Cities { get; set; }
+        public DbSet<District> Districts { get; set; }
         public DbSet<LocationInfo> Locations { get; set; }
         public DbSet<LocationImage> LocationImages { get; set; }
 
+        //University System
+        public DbSet<StudyGroup> StudyGroups { get; set; }
+        public DbSet<StudyField> StudyFields { get; set; }
+
         public DbSet<School> Schools { get; set; }
+
+        public DbSet<RequestSubjectSchedule> RequestSubjectSchedules { get; set; }
         //Many to Many Relationship
         public DbSet<UserModelRequestSubject> UserModelRequestSubjects { get; set; }
 

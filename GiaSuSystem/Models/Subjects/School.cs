@@ -13,10 +13,12 @@ namespace GiaSuSystem.Models.Subjects
         public int SchoolID { get; set; }
         [Column(TypeName = "nvarchar(50)")]
         public string SchoolName { get; set; }
-        [Column(TypeName = "nvarchar(50)")]
-        public string City { get; set; }
-        [Column(TypeName = "nvarchar(50)")]
-        public string District { get; set; }
+        [Required]
+        [ForeignKey("CityID")]
+        public int City { get; set; }
+        [Required]
+        [ForeignKey("DistrictID")]
+        public int District { get; set; }
         [Column(TypeName = "nvarchar(100)")]
         public string SchoolAddress { get; set; }
         public string SchoolLogo { get; set; }
