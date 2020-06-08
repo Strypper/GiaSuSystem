@@ -12,10 +12,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20200416131203_Version 1.0.0.cs" />
-    <Compile Remove="Migrations\20200416131203_Version 1.0.0.Designer.cs" />
-    <Compile Remove="Migrations\20200416131529_Version 1.0.0.cs" />
-    <Compile Remove="Migrations\20200416131529_Version 1.0.0.Designer.cs" />
+    <Compile Remove="Migrations\20200528054645_Version 1.0.0.cs" />
+    <Compile Remove="Migrations\20200528054645_Version 1.0.0.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

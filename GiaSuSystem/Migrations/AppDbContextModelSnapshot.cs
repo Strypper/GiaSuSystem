@@ -71,10 +71,11 @@ namespace GiaSuSystem.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Country")
-                        .HasColumnType("nvarchar(40)");
+                    b.Property<int>("City")
+                        .HasColumnType("int");
 
                     b.Property<string>("District")
+                        .IsRequired()
                         .HasColumnType("nvarchar(40)");
 
                     b.Property<int?>("OwnerId")

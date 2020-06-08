@@ -23,44 +23,6 @@ namespace GiaSuSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Schools",
-                columns: table => new
-                {
-                    SchoolID = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    SchoolName = table.Column<string>(type: "nvarchar(50)", nullable: true),
-                    City = table.Column<string>(type: "nvarchar(50)", nullable: true),
-                    District = table.Column<string>(type: "nvarchar(50)", nullable: true),
-                    SchoolAddress = table.Column<string>(type: "nvarchar(100)", nullable: true),
-                    SchoolLogo = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Schools", x => x.SchoolID);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetRoleClaims",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    RoleId = table.Column<int>(nullable: false),
-                    ClaimType = table.Column<string>(nullable: true),
-                    ClaimValue = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetUsers",
                 columns: table => new
                 {
@@ -88,21 +50,89 @@ namespace GiaSuSystem.Migrations
                     DayOfBirth = table.Column<DateTime>(type: "date", nullable: false),
                     Gender = table.Column<bool>(type: "bit", nullable: false),
                     Age = table.Column<byte>(type: "tinyint", nullable: false),
-                    SchoolID = table.Column<int>(nullable: true),
-                    Address = table.Column<string>(type: "nvarchar(50)", nullable: false),
-                    City = table.Column<string>(type: "nvarchar(50)", nullable: false),
-                    District = table.Column<string>(type: "nvarchar(50)", nullable: false),
-                    Department = table.Column<int>(nullable: false)
+                    UserAddress = table.Column<string>(type: "nvarchar(50)", nullable: false),
+                    UserCity = table.Column<int>(nullable: false),
+                    UserDistrict = table.Column<int>(nullable: false),
+                    StudyGroupID = table.Column<int>(nullable: false),
+                    StudyFieldID = table.Column<int>(nullable: false),
+                    SchoolID = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AspNetUsers_Schools_SchoolID",
-                        column: x => x.SchoolID,
-                        principalTable: "Schools",
-                        principalColumn: "SchoolID",
-                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Cities",
+                columns: table => new
+                {
+                    CityID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CityName = table.Column<string>(type: "nvarchar(50)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Cities", x => x.CityID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Districts",
+                columns: table => new
+                {
+                    DistrictID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CityID = table.Column<int>(nullable: false),
+                    DistrictName = table.Column<string>(type: "nvarchar(50)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Districts", x => x.DistrictID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Schools",
+                columns: table => new
+                {
+                    SchoolID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SchoolName = table.Column<string>(type: "nvarchar(50)", nullable: true),
+                    City = table.Column<int>(nullable: false),
+                    District = table.Column<int>(nullable: false),
+                    SchoolAddress = table.Column<string>(type: "nvarchar(100)", nullable: true),
+                    SchoolLogo = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Schools", x => x.SchoolID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StudyFields",
+                columns: table => new
+                {
+                    StudyFieldID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StudyGroupID = table.Column<int>(nullable: false),
+                    StudyFieldName = table.Column<string>(type: "nvarchar(50)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StudyFields", x => x.StudyFieldID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StudyGroups",
+                columns: table => new
+                {
+                    StudyGroupID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StudyGroupName = table.Column<string>(type: "nvarchar(50)", nullable: false),
+                    StudyGroupImage = table.Column<string>(nullable: true),
+                    TitleColor = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StudyGroups", x => x.StudyGroupID);
                 });
 
             migrationBuilder.CreateTable(
@@ -112,19 +142,35 @@ namespace GiaSuSystem.Migrations
                     SubjectID = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(50)", nullable: true),
-                    SchoolID = table.Column<int>(nullable: true),
-                    Department = table.Column<int>(nullable: false),
-                    Teacher = table.Column<string>(type: "nvarchar(50)", nullable: true)
+                    SchoolID = table.Column<int>(nullable: false),
+                    Teacher = table.Column<string>(type: "nvarchar(50)", nullable: true),
+                    StudyGroupID = table.Column<int>(nullable: false),
+                    StudyFieldID = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Subjects", x => x.SubjectID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetRoleClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoleId = table.Column<int>(nullable: false),
+                    ClaimType = table.Column<string>(nullable: true),
+                    ClaimValue = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Subjects_Schools_SchoolID",
-                        column: x => x.SchoolID,
-                        principalTable: "Schools",
-                        principalColumn: "SchoolID",
-                        onDelete: ReferentialAction.Restrict);
+                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -219,8 +265,8 @@ namespace GiaSuSystem.Migrations
                     LocationId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Address = table.Column<string>(type: "nvarchar(100)", nullable: false),
-                    Country = table.Column<string>(type: "nvarchar(40)", nullable: true),
-                    District = table.Column<string>(type: "nvarchar(40)", nullable: true),
+                    City = table.Column<int>(nullable: false),
+                    District = table.Column<string>(type: "nvarchar(40)", nullable: false),
                     Street = table.Column<string>(type: "nvarchar(100)", nullable: true),
                     OwnerId = table.Column<int>(nullable: true),
                     Type = table.Column<int>(nullable: false),
@@ -235,6 +281,41 @@ namespace GiaSuSystem.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RequestSubjects",
+                columns: table => new
+                {
+                    RequestID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SubjectID = table.Column<int>(nullable: false),
+                    Price = table.Column<decimal>(nullable: false),
+                    OwnerId = table.Column<int>(nullable: true),
+                    RequestDate = table.Column<DateTime>(nullable: false),
+                    LearningAddress = table.Column<string>(nullable: false),
+                    LearningDistrict = table.Column<int>(nullable: false),
+                    LearningCity = table.Column<int>(nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(200)", nullable: false),
+                    HomeWork = table.Column<bool>(type: "bit", nullable: false),
+                    Presentation = table.Column<bool>(type: "bit", nullable: false),
+                    Laboratory = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RequestSubjects", x => x.RequestID);
+                    table.ForeignKey(
+                        name: "FK_RequestSubjects_AspNetUsers_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_RequestSubjects_Subjects_SubjectID",
+                        column: x => x.SubjectID,
+                        principalTable: "Subjects",
+                        principalColumn: "SubjectID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -305,46 +386,25 @@ namespace GiaSuSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RequestSubjects",
+                name: "RequestSubjectSchedules",
                 columns: table => new
                 {
-                    RequestID = table.Column<int>(nullable: false)
+                    ScheduleID = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    SubjectID = table.Column<int>(nullable: false),
-                    Price = table.Column<decimal>(nullable: false),
-                    OwnerId = table.Column<int>(nullable: true),
-                    RequestDate = table.Column<DateTime>(nullable: false),
-                    LocationAddressLocationId = table.Column<int>(nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(200)", nullable: false),
-                    SchoolID = table.Column<int>(nullable: false)
+                    WeekDay = table.Column<string>(nullable: false),
+                    TimeStart = table.Column<TimeSpan>(type: "time", nullable: false),
+                    TimeEnd = table.Column<TimeSpan>(type: "time", nullable: false),
+                    RequestSubjectRequestID = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RequestSubjects", x => x.RequestID);
+                    table.PrimaryKey("PK_RequestSubjectSchedules", x => x.ScheduleID);
                     table.ForeignKey(
-                        name: "FK_RequestSubjects_Locations_LocationAddressLocationId",
-                        column: x => x.LocationAddressLocationId,
-                        principalTable: "Locations",
-                        principalColumn: "LocationId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_RequestSubjects_AspNetUsers_OwnerId",
-                        column: x => x.OwnerId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
+                        name: "FK_RequestSubjectSchedules_RequestSubjects_RequestSubjectRequestID",
+                        column: x => x.RequestSubjectRequestID,
+                        principalTable: "RequestSubjects",
+                        principalColumn: "RequestID",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_RequestSubjects_Schools_SchoolID",
-                        column: x => x.SchoolID,
-                        principalTable: "Schools",
-                        principalColumn: "SchoolID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_RequestSubjects_Subjects_SubjectID",
-                        column: x => x.SubjectID,
-                        principalTable: "Subjects",
-                        principalColumn: "SubjectID",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -411,11 +471,6 @@ namespace GiaSuSystem.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_SchoolID",
-                table: "AspNetUsers",
-                column: "SchoolID");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Drinks_LocationInfoLocationId",
                 table: "Drinks",
                 column: "LocationInfoLocationId");
@@ -436,19 +491,9 @@ namespace GiaSuSystem.Migrations
                 column: "OwnerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RequestSubjects_LocationAddressLocationId",
-                table: "RequestSubjects",
-                column: "LocationAddressLocationId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_RequestSubjects_OwnerId",
                 table: "RequestSubjects",
                 column: "OwnerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RequestSubjects_SchoolID",
-                table: "RequestSubjects",
-                column: "SchoolID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RequestSubjects_SubjectID",
@@ -456,9 +501,9 @@ namespace GiaSuSystem.Migrations
                 column: "SubjectID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Subjects_SchoolID",
-                table: "Subjects",
-                column: "SchoolID");
+                name: "IX_RequestSubjectSchedules_RequestSubjectRequestID",
+                table: "RequestSubjectSchedules",
+                column: "RequestSubjectRequestID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserModelRequestSubjects_RequestId",
@@ -484,6 +529,12 @@ namespace GiaSuSystem.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Cities");
+
+            migrationBuilder.DropTable(
+                name: "Districts");
+
+            migrationBuilder.DropTable(
                 name: "Drinks");
 
             migrationBuilder.DropTable(
@@ -493,25 +544,34 @@ namespace GiaSuSystem.Migrations
                 name: "LocationImages");
 
             migrationBuilder.DropTable(
+                name: "RequestSubjectSchedules");
+
+            migrationBuilder.DropTable(
+                name: "Schools");
+
+            migrationBuilder.DropTable(
+                name: "StudyFields");
+
+            migrationBuilder.DropTable(
+                name: "StudyGroups");
+
+            migrationBuilder.DropTable(
                 name: "UserModelRequestSubjects");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "RequestSubjects");
-
-            migrationBuilder.DropTable(
                 name: "Locations");
 
             migrationBuilder.DropTable(
-                name: "Subjects");
+                name: "RequestSubjects");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Schools");
+                name: "Subjects");
         }
     }
 }

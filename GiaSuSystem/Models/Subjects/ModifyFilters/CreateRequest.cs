@@ -26,5 +26,6 @@ namespace GiaSuSystem.Models.Subjects.ModifyFilters
         public bool HomeWork { get; set; }
         public bool Presentation { get; set; }
         public bool Laboratory { get; set; }
+        public ICollection<RequestSubjectSchedule> WeekDays { get; set; }
     }
 }

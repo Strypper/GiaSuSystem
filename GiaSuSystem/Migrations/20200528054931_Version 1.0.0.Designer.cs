@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GiaSuSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20200519100131_Version 1.1.7")]
-    partial class Version117
+    [Migration("20200528054931_Version 1.0.0")]
+    partial class Version100
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -54,6 +54,9 @@ namespace GiaSuSystem.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("TitleColor")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("StudyGroupID");
 
                     b.ToTable("StudyGroups");
@@ -70,10 +73,11 @@ namespace GiaSuSystem.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Country")
-                        .HasColumnType("nvarchar(40)");
+                    b.Property<int>("City")
+                        .HasColumnType("int");
 
                     b.Property<string>("District")
+                        .IsRequired()
                         .HasColumnType("nvarchar(40)");
 
                     b.Property<int?>("OwnerId")
@@ -226,27 +230,6 @@ namespace GiaSuSystem.Migrations
                     b.ToTable("LocationImages");
                 });
 
-            modelBuilder.Entity("GiaSuSystem.Models.Subjects.RequestSchedule", b =>
-                {
-                    b.Property<int>("ScheduleID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<TimeSpan>("TimeEnd")
-                        .HasColumnType("time");
-
-                    b.Property<TimeSpan>("TimeStart")
-                        .HasColumnType("time");
-
-                    b.Property<string>("WeekDay")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ScheduleID");
-
-                    b.ToTable("RequestSchedules");
-                });
-
             modelBuilder.Entity("GiaSuSystem.Models.Subjects.RequestSubject", b =>
                 {
                     b.Property<int>("RequestID")
@@ -296,6 +279,33 @@ namespace GiaSuSystem.Migrations
                     b.HasIndex("SubjectID");
 
                     b.ToTable("RequestSubjects");
+                });
+
+            modelBuilder.Entity("GiaSuSystem.Models.Subjects.RequestSubjectSchedule", b =>
+                {
+                    b.Property<int>("ScheduleID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("RequestSubjectRequestID")
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan>("TimeEnd")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan>("TimeStart")
+                        .HasColumnType("time");
+
+                    b.Property<string>("WeekDay")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ScheduleID");
+
+                    b.HasIndex("RequestSubjectRequestID");
+
+                    b.ToTable("RequestSubjectSchedules");
                 });
 
             modelBuilder.Entity("GiaSuSystem.Models.Subjects.School", b =>
@@ -650,6 +660,13 @@ namespace GiaSuSystem.Migrations
                         .HasForeignKey("SubjectID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("GiaSuSystem.Models.Subjects.RequestSubjectSchedule", b =>
+                {
+                    b.HasOne("GiaSuSystem.Models.Subjects.RequestSubject", null)
+                        .WithMany("RequestSchedules")
+                        .HasForeignKey("RequestSubjectRequestID");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

@@ -18,7 +18,7 @@ namespace GiaSuSystem.Database
 {
     public class AppDbContext : IdentityDbContext<UserModel, IdentityRole<int>, int>
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {  }
 
         //Menu
         public DbSet<Drink> Drinks { get; set; }

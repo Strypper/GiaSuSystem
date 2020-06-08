@@ -17,10 +17,13 @@ namespace GiaSuSystem.Models.Location
         [Required]
         [Column(TypeName = "nvarchar(100)")]
         public string Address { get; set; }
+        [Required]
+        [ForeignKey("CityID")]
+        public int City { get; set; }
         [Column(TypeName = "nvarchar(40)")]
-        public string Country { get; set; }
-        [Column(TypeName = "nvarchar(40)")]
-        public string District { get; set; }
+        [Required]
+        [ForeignKey("DistrictID")]
+        public int District { get; set; }
         [Column(TypeName = "nvarchar(100)")]
         public string Street { get; set; }
         public virtual ICollection<LocationImage> ImagePaths { get; set; }

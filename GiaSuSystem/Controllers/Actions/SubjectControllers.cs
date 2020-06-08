@@ -149,7 +149,8 @@ namespace GiaSuSystem.Models.Actions
                 Description = request.Description,
                 HomeWork = request.HomeWork,
                 Presentation = request.Presentation,
-                Laboratory = request.Laboratory
+                Laboratory = request.Laboratory,
+                RequestSchedules = request.WeekDays
             });
             await _ctx.SaveChangesAsync();
             return Ok("Your Subject successfully get to our system");
