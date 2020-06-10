@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,8 +46,8 @@ namespace GiaSuSystem.Models.Actions
         [HttpGet("{page}")]
         public async Task<IActionResult> RequestPage(int page)
         {
-            page = page * 10;
-            var result = from Subject in _ctx.RequestSubjects.AsNoTracking().OrderBy(x => x.RequestDate).Skip(page).Take(10)
+            page = page * 18;
+            var result = from Subject in _ctx.RequestSubjects.AsNoTracking().OrderBy(x => x.RequestDate).Skip(page).Take(18)
                          join scName in _ctx.Schools on Subject.Subject.SchoolID equals scName.SchoolID into RequestPage
                          from m in RequestPage.DefaultIfEmpty()
                          select new
@@ -61,6 +62,24 @@ namespace GiaSuSystem.Models.Actions
                              SchoolName = m.SchoolName
                          };
             return Ok(await result.AsNoTracking().ToListAsync());
+        }
+        [AllowAnonymous]
+        [HttpGet("{subject}")]
+        public async Task<IActionResult> SearchSubject(string subject)
+        {
+            var result = await _ctx.RequestSubjects.Include(a => a.Subject)
+                                   .Include(b => b.Students).Include(c => c.RequestSchedules)
+                                   .Include(d => d.Owner)
+                                   .Where(s => s.Subject.Name.StartsWith(subject)).ToListAsync();
+            return Ok(result);
+        }
+        [AllowAnonymous]
+        [HttpGet("{group}")]
+        public async Task<IActionResult> FilterSubject(int group)
+        {
+            var result = await _ctx.RequestSubjects.Where(s => s.Subject.StudyGroupID == group)
+                             .AsNoTracking().ToListAsync();
+            return Ok(result);
         }
         [AllowAnonymous]
         [HttpGet("{id}")]

@@ -13,6 +13,7 @@ using GiaSuSystem.Models.MMTables;
 using Microsoft.AspNetCore.Identity;
 using GiaSuSystem.Models.EducationSystem;
 using GiaSuSystem.Models.Location.VietNam;
+using GiaSuSystem.Models.AppMaintance;
 
 namespace GiaSuSystem.Database
 {
@@ -41,6 +42,8 @@ namespace GiaSuSystem.Database
         public DbSet<RequestSubjectSchedule> RequestSubjectSchedules { get; set; }
         //Many to Many Relationship
         public DbSet<UserModelRequestSubject> UserModelRequestSubjects { get; set; }
+        //AppMaintance
+        public DbSet<FeedbackHub> FeedbackHubs { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
