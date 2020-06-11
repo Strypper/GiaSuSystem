@@ -67,19 +67,41 @@ namespace GiaSuSystem.Models.Actions
         [HttpGet("{subject}")]
         public async Task<IActionResult> SearchSubject(string subject)
         {
-            var result = await _ctx.RequestSubjects.Include(a => a.Subject)
-                                   .Include(b => b.Students).Include(c => c.RequestSchedules)
-                                   .Include(d => d.Owner)
-                                   .Where(s => s.Subject.Name.StartsWith(subject)).ToListAsync();
-            return Ok(result);
+            var result = from Subject in _ctx.RequestSubjects.AsNoTracking().OrderBy(x => x.RequestDate).Where(s => s.Subject.Name.StartsWith(subject))
+                         join scName in _ctx.Schools on Subject.Subject.SchoolID equals scName.SchoolID into RequestPage
+                         from m in RequestPage.DefaultIfEmpty()
+                         select new
+                         {
+                             RequestID = Subject.RequestID,
+                             ProfileUrlImage = Subject.Owner.ProfileImageUrl,
+                             Firstname = Subject.Owner.FirstName,
+                             Lastname = Subject.Owner.LastName,
+                             Price = Subject.Price,
+                             Sub = Subject.Subject.Name,
+                             Date = Subject.RequestDate,
+                             SchoolName = m.SchoolName
+                         };
+            return Ok(await result.AsNoTracking().ToListAsync());
         }
         [AllowAnonymous]
-        [HttpGet("{group}")]
-        public async Task<IActionResult> FilterSubject(int group)
+        [HttpGet("{groupid}")]
+        public async Task<IActionResult> FilterSubject(int groupid)
         {
-            var result = await _ctx.RequestSubjects.Where(s => s.Subject.StudyGroupID == group)
-                             .AsNoTracking().ToListAsync();
-            return Ok(result);
+            var result = from Subject in _ctx.RequestSubjects.AsNoTracking().OrderBy(x => x.RequestDate).Where(s => s.Subject.StudyGroupID == groupid)
+                         join scName in _ctx.Schools on Subject.Subject.SchoolID equals scName.SchoolID into RequestPage
+                         from m in RequestPage.DefaultIfEmpty()
+                         select new
+                         {
+                             RequestID = Subject.RequestID,
+                             ProfileUrlImage = Subject.Owner.ProfileImageUrl,
+                             Firstname = Subject.Owner.FirstName,
+                             Lastname = Subject.Owner.LastName,
+                             Price = Subject.Price,
+                             Sub = Subject.Subject.Name,
+                             Date = Subject.RequestDate,
+                             SchoolName = m.SchoolName
+                         };
+            return Ok(await result.AsNoTracking().ToListAsync());
         }
         [AllowAnonymous]
         [HttpGet("{id}")]
