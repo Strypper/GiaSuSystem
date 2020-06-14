@@ -1,5 +1,6 @@
 ﻿using GiaSuSystem.Database;
 using GiaSuSystem.Models.AppMaintance;
+using GiaSuSystem.Models.AppMaintance.ModifyFilters;
 using GiaSuSystem.Models.User;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -23,9 +24,17 @@ namespace GiaSuSystem.Controllers.AppMaintance
         public FeedbackControllers(AppDbContext ctx, UserManager<UserModel> userManager) { _ctx = ctx; _userManager = userManager; }
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IEnumerable<FeedbackHub>> Feedbacks()
+        public async Task<IEnumerable<FeedBacks>> Feedbacks()
         {
-            var request = _ctx.FeedbackHubs.Include(x => x.Owner).AsNoTracking();
+            var request = _ctx.FeedbackHubs.Include(x => x.Owner).AsNoTracking()
+                              .Select(x => new FeedBacks 
+                              {
+                                  FeedBackId = x.IssueID,
+                                  Title = x.Title,
+                                  Detail = x.Detail,
+                                  UserID = x.Owner.Id,
+                                  UserName = x.Owner.FirstName
+                              });
             return await request.ToListAsync();
         }
         public async Task<IActionResult> CreateFeedBack([FromBody]FeedbackHub feedback)
