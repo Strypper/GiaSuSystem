@@ -111,6 +111,7 @@ namespace GiaSuSystem.Models.Actions
             var request = await _ctx.RequestSubjects.AsNoTracking()
                         .Include(x => x.Students)
                         .Include(z => z.Subject)
+                        .Include(y => y.RequestSchedules)
                         .FirstOrDefaultAsync(z => z.RequestID == id);
             var schoolsubject = await _ctx.Schools.AsNoTracking()
                                       .FirstAsync(x => x.SchoolID == request.Subject.SchoolID);
@@ -126,6 +127,8 @@ namespace GiaSuSystem.Models.Actions
                           .FirstAsync(x => x.DistrictID == schoolsubject.District);
             var scc = await _ctx.Cities.AsNoTracking()
                           .FirstAsync(x => x.CityID == schoolsubject.City);
+            //var requestschedule = await _ctx.RequestSubjectSchedules.AsNoTracking()
+            //                                .Where(x => x.ScheduleID == request.RequestSchedules.)
             string schooldistrict = scd.DistrictName;
             string schoolcity = scc.CityName;
             return new
@@ -147,7 +150,9 @@ namespace GiaSuSystem.Models.Actions
                 schoolsubject.SchoolName,
                 schoolsubject.SchoolLogo,
                 schoolsubject.SchoolAddress,
-                schooldistrict,schoolcity
+                schooldistrict,schoolcity,
+                request.RequestSchedules,
+                request.PayMentTime
             };
         }
         [HttpPost]
