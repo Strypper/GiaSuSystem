@@ -34,13 +34,10 @@ namespace GiaSuSystem.Models.User
         [Range(18, 60, ErrorMessage = "Your Age Must Older Than 18")]
         [Column(TypeName = "tinyint")]
         public int Age { get; set; }
-        [Required]
         [Column(TypeName = "nvarchar(50)")]
         public string UserAddress { get; set; }
-        [Required]
         [ForeignKey("CityID")]
         public int UserCity { get; set; }
-        [Required]
         [ForeignKey("DistrictID")]
         public int UserDistrict { get; set; }
         [ForeignKey("StudyGroupID")]
