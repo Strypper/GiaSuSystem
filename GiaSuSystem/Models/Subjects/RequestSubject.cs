@@ -12,12 +12,6 @@ namespace GiaSuSystem.Models.Subjects
 {
     public class RequestSubject
     {
-        public enum PayMentTimes
-        {
-            Hour,
-            Week,
-            Month
-        }
         [Key]
         public int RequestID { get; set; }
         [Required]
@@ -46,6 +40,6 @@ namespace GiaSuSystem.Models.Subjects
         public bool Presentation { get; set; }
         [Column(TypeName = "bit")]
         public bool Laboratory { get; set; }
-        public PayMentTimes PayMentTime { get; set; }
+        public PayMentTime PayMentTime { get; set; }
     }
 }

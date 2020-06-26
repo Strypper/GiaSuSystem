@@ -136,6 +136,8 @@ namespace GiaSuSystem.Controllers
             return new
             {
                 user.UserName,
+                user.FirstName,
+                user.LastName,
                 user.PhoneNumber,
                 user.Email,
                 user.Role,
