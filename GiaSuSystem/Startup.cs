@@ -30,7 +30,6 @@ namespace GiaSuSystem
         }
 
         public IConfiguration Configuration { get; }
-        public string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -68,14 +67,6 @@ namespace GiaSuSystem
                     ClockSkew = TimeSpan.Zero
                 };
             });
-            services.AddCors(options =>
-            {
-                options.AddPolicy(name: MyAllowSpecificOrigins,
-                                  builder =>
-                                  {
-                                      builder.WithOrigins("http://61.28.238.6/");
-                                  });
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -89,7 +80,6 @@ namespace GiaSuSystem
             app.UseHttpsRedirection();
 
             app.UseRouting();
-            app.UseCors(MyAllowSpecificOrigins);
 
             app.UseAuthorization();
 
