@@ -73,7 +73,7 @@ namespace GiaSuSystem
                 options.AddPolicy(name: MyAllowSpecificOrigins,
                                   builder =>
                                   {
-                                      builder.WithOrigins("https://giasureactweb.z23.web.core.windows.net/");
+                                      builder.WithOrigins("http://61.28.238.6/");
                                   });
             });
         }
