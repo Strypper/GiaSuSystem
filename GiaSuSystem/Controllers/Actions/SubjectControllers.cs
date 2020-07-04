@@ -134,6 +134,7 @@ namespace GiaSuSystem.Models.Actions
             return new
             {
                 request.Subject.Name,
+                studygroup.StudyGroupImage,
                 studygroup.StudyGroupName,
                 studyfield.StudyFieldName,
                 request.Description,
