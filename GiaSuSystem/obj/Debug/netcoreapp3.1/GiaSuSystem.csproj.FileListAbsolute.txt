@@ -128,7 +128,6 @@ C:\Users\ocgrb\source\repos\GiaSuSystem\GiaSuSystem\bin\Debug\netcoreapp3.1\runt
 C:\Users\ocgrb\source\repos\GiaSuSystem\GiaSuSystem\bin\Debug\netcoreapp3.1\runtimes\unix\lib\netcoreapp2.0\System.Runtime.Caching.dll
 C:\Users\ocgrb\source\repos\GiaSuSystem\GiaSuSystem\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp2.0\System.Runtime.Caching.dll
 C:\Users\ocgrb\source\repos\GiaSuSystem\GiaSuSystem\bin\Debug\netcoreapp3.1\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
-C:\Users\ocgrb\source\repos\GiaSuSystem\GiaSuSystem\obj\Debug\netcoreapp3.1\GiaSuSystem.csprojAssemblyReference.cache
 C:\Users\ocgrb\source\repos\GiaSuSystem\GiaSuSystem\obj\Debug\netcoreapp3.1\GiaSuSystem.AssemblyInfoInputs.cache
 C:\Users\ocgrb\source\repos\GiaSuSystem\GiaSuSystem\obj\Debug\netcoreapp3.1\GiaSuSystem.AssemblyInfo.cs
 C:\Users\ocgrb\source\repos\GiaSuSystem\GiaSuSystem\obj\Debug\netcoreapp3.1\GiaSuSystem.csproj.CoreCompileInputs.cache

@@ -21,11 +21,11 @@ namespace GiaSuSystem.Models.Actions
     [ApiController]
     [Route("api/[controller]/[action]")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
-    public class SubjectControllers : ControllerBase
+    public class CollegeSubjectControllers : ControllerBase
     {
         private AppDbContext _ctx;
         private UserManager<UserModel> _userManager;
-        public SubjectControllers(AppDbContext ctx, UserManager<UserModel> userManager) { _ctx = ctx; _userManager = userManager; }
+        public CollegeSubjectControllers(AppDbContext ctx, UserManager<UserModel> userManager) { _ctx = ctx; _userManager = userManager; }
         [AllowAnonymous]
         [HttpGet]
         public async Task<IEnumerable<RequestSubject>> Requests()
@@ -44,7 +44,7 @@ namespace GiaSuSystem.Models.Actions
         }
         [AllowAnonymous]
         [HttpGet("{page}")]
-        public async Task<IActionResult> RequestPage(int page)
+        public async Task<IActionResult> RequestCollegeSubjectsPage(int page)
         {
             page = page * 18;
             var result = from Subject in _ctx.RequestSubjects.AsNoTracking().OrderBy(x => x.RequestDate).Skip(page).Take(18)
@@ -53,19 +53,20 @@ namespace GiaSuSystem.Models.Actions
                          select new
                          {
                              RequestID = Subject.RequestID,
-                             ProfileUrlImage = Subject.Owner.ProfileImageUrl,
-                             Firstname = Subject.Owner.FirstName,
-                             Lastname = Subject.Owner.LastName,
+                             //ProfileUrlImage = Subject.Owner.ProfileImageUrl,
+                             //Firstname = Subject.Owner.FirstName,
+                             //Lastname = Subject.Owner.LastName,
                              Price = Subject.Price,
                              Sub = Subject.Subject.Name,
                              Date = Subject.RequestDate,
-                             SchoolName = m.SchoolName
+                             SchoolName = m.SchoolName,
+                             SchoolLogoUrl = m.SchoolLogo
                          };
             return Ok(await result.AsNoTracking().ToListAsync());
         }
         [AllowAnonymous]
         [HttpGet("{subject}")]
-        public async Task<IActionResult> SearchSubject(string subject)
+        public async Task<IActionResult> SearchCollegeSubjectsSubject(string subject)
         {
             var result = from Subject in _ctx.RequestSubjects.AsNoTracking().OrderBy(x => x.RequestDate).Where(s => s.Subject.Name.StartsWith(subject))
                          join scName in _ctx.Schools on Subject.Subject.SchoolID equals scName.SchoolID into RequestPage
@@ -85,7 +86,7 @@ namespace GiaSuSystem.Models.Actions
         }
         [AllowAnonymous]
         [HttpGet("{groupid}")]
-        public async Task<IActionResult> FilterSubject(int groupid)
+        public async Task<IActionResult> FilterCollegeSubjectsSubject(int groupid)
         {
             var result = from Subject in _ctx.RequestSubjects.AsNoTracking().OrderBy(x => x.RequestDate).Where(s => s.Subject.StudyGroupID == groupid)
                          join scName in _ctx.Schools on Subject.Subject.SchoolID equals scName.SchoolID into RequestPage
@@ -105,7 +106,7 @@ namespace GiaSuSystem.Models.Actions
         }
         [AllowAnonymous]
         [HttpGet("{id}")]
-        public async Task<Object> RequestDetail(int id)
+        public async Task<Object> RequestCollegeSubjectDetail(int id)
         {
             //Object type will return null, remember to include all of them
             var request = await _ctx.RequestSubjects.AsNoTracking()
@@ -157,7 +158,7 @@ namespace GiaSuSystem.Models.Actions
             };
         }
         [HttpPost]
-        public async Task<IActionResult> CreateRequest([FromBody]CreateRequest request)
+        public async Task<IActionResult> CreateCollegeSubjectRequest([FromBody]CreateRequest request)
         {
             string userId = User.Claims.First(c => c.Type == "UserID").Value;
             var user = await _userManager.FindByIdAsync(userId);
