@@ -46,8 +46,8 @@ namespace GiaSuSystem.Models.Actions
         [HttpGet("{page}")]
         public async Task<IActionResult> RequestCollegeSubjectsPage(int page)
         {
-            page = page * 18;
-            var result = from Subject in _ctx.RequestSubjects.AsNoTracking().OrderBy(x => x.RequestDate).Skip(page).Take(18)
+            page = page * 24;
+            var result = from Subject in _ctx.RequestSubjects.AsNoTracking().OrderBy(x => x.RequestDate).Skip(page).Take(24)
                          join scName in _ctx.Schools on Subject.Subject.SchoolID equals scName.SchoolID into RequestPage
                          from m in RequestPage.DefaultIfEmpty()
                          select new
