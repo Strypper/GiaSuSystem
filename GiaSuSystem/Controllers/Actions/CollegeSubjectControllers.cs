@@ -60,7 +60,8 @@ namespace GiaSuSystem.Models.Actions
                              Sub = Subject.Subject.Name,
                              Date = Subject.RequestDate,
                              SchoolName = m.SchoolName,
-                             SchoolLogoUrl = m.SchoolLogo
+                             SchoolLogoUrl = m.SchoolLogo,
+                             PaymentTimeType = Subject.PayMentTime
                          };
             return Ok(await result.AsNoTracking().ToListAsync());
         }
