@@ -65,6 +65,54 @@ namespace GiaSuSystem.Models.Actions
                          };
             return Ok(await result.AsNoTracking().ToListAsync());
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateCollegeSubjectRequest([FromBody] CreateRequest request)
+        {
+            string userId = User.Claims.First(c => c.Type == "UserID").Value;
+            var user = await _userManager.FindByIdAsync(userId);
+            School _Sc = new School();
+            Subject _Sj = new Subject();
+            _Sj.Name = request.SubjectName;
+            _Sj.Teacher = request.SubjectTeacher;
+            _Sj.StudyGroupID = request.StudyGroup;
+            _Sj.StudyFieldID = request.StudyField;
+            if (request.SchoolID.HasValue)
+            {
+                if (_ctx.Schools.AsNoTracking().FirstOrDefault(s => s.SchoolID == request.SchoolID) is School sc)
+                {
+                    _Sj.SchoolID = sc.SchoolID;
+                }
+            }
+            else
+            {
+                _Sc.SchoolName = request.SchoolName;
+                _Sc.SchoolAddress = request.SchoolAddress;
+                _Sc.District = request.SchoolDistrict;
+                _Sc.City = request.SchoolCity;
+                _ctx.Schools.Add(_Sc);
+                await _ctx.SaveChangesAsync();
+                _Sj.SchoolID = _Sc.SchoolID;
+            }
+            _ctx.RequestSubjects.Add(new RequestSubject
+            {
+                Subject = _Sj,
+                Price = request.Price,
+                Owner = user,
+                RequestDate = DateTime.Now,
+                LearningAddress = request.LearningAddress,
+                LearningDistrict = request.LearningDistrict,
+                LearningCity = request.LearningCity,
+                Description = request.Description,
+                HomeWork = request.HomeWork,
+                Presentation = request.Presentation,
+                Laboratory = request.Laboratory,
+                RequestSchedules = request.WeekDays,
+                PayMentTime = (PayMentTime)request.PayMentTime
+            });
+            await _ctx.SaveChangesAsync();
+            return Ok("Your Subject successfully get to our system");
+        }
         [AllowAnonymous]
         [HttpGet("{subject}")]
         public async Task<IActionResult> SearchCollegeSubjectsSubject(string subject)
@@ -157,53 +205,6 @@ namespace GiaSuSystem.Models.Actions
                 request.RequestSchedules,
                 request.PayMentTime
             };
-        }
-        [HttpPost]
-        public async Task<IActionResult> CreateCollegeSubjectRequest([FromBody]CreateRequest request)
-        {
-            string userId = User.Claims.First(c => c.Type == "UserID").Value;
-            var user = await _userManager.FindByIdAsync(userId);
-            School _Sc = new School();
-            Subject _Sj = new Subject();
-            _Sj.Name = request.SubjectName;
-            _Sj.Teacher = request.SubjectTeacher;
-            _Sj.StudyGroupID = request.StudyGroup;
-            _Sj.StudyFieldID = request.StudyField;
-            if (request.SchoolID.HasValue)
-            {
-                if (_ctx.Schools.AsNoTracking().FirstOrDefault(s => s.SchoolID == request.SchoolID) is School sc)
-                {
-                    _Sj.SchoolID = sc.SchoolID;
-                }
-            }
-            else
-            {
-                _Sc.SchoolName = request.SchoolName;
-                _Sc.SchoolAddress = request.SchoolAddress;
-                _Sc.District = request.SchoolDistrict;
-                _Sc.City = request.SchoolCity;
-                _ctx.Schools.Add(_Sc);
-                await _ctx.SaveChangesAsync();
-                _Sj.SchoolID = _Sc.SchoolID;
-            }
-            _ctx.RequestSubjects.Add(new RequestSubject
-            {
-                Subject = _Sj,
-                Price = request.Price,
-                Owner = user,
-                RequestDate = DateTime.Now,
-                LearningAddress = request.LearningAddress,
-                LearningDistrict = request.LearningDistrict,
-                LearningCity = request.LearningCity,
-                Description = request.Description,
-                HomeWork = request.HomeWork,
-                Presentation = request.Presentation,
-                Laboratory = request.Laboratory,
-                RequestSchedules = request.WeekDays,
-                PayMentTime = (PayMentTime)request.PayMentTime
-            });
-            await _ctx.SaveChangesAsync();
-            return Ok("Your Subject successfully get to our system");
         }
         [AllowAnonymous]
         [HttpGet]
