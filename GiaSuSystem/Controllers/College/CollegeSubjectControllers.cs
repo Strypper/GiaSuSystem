@@ -16,7 +16,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace GiaSuSystem.Models.Actions
+namespace GiaSuSystem.Models.College
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
@@ -65,7 +65,60 @@ namespace GiaSuSystem.Models.Actions
                          };
             return Ok(await result.AsNoTracking().ToListAsync());
         }
-
+        [AllowAnonymous]
+        [HttpGet("{id}")]
+        public async Task<Object> RequestCollegeSubjectDetail(int id)
+        {
+            //Object type will return null, remember to include all of them
+            var request = await _ctx.RequestSubjects.AsNoTracking()
+                        .Include(x => x.Students)
+                        .Include(z => z.Subject)
+                        .Include(y => y.RequestSchedules)
+                        .FirstOrDefaultAsync(z => z.RequestID == id);
+            var schoolsubject = await _ctx.Schools.AsNoTracking()
+                                      .FirstAsync(x => x.SchoolID == request.Subject.SchoolID);
+            var studygroup = await _ctx.StudyGroups.AsNoTracking()
+                          .FirstAsync(x => x.StudyGroupID == request.Subject.StudyGroupID);
+            var studyfield = await _ctx.StudyFields.AsNoTracking()
+                          .FirstAsync(x => x.StudyFieldID == request.Subject.StudyFieldID);
+            var learningdistrict = await _ctx.Districts.AsNoTracking()
+                          .FirstAsync(x => x.DistrictID == request.LearningDistrict);
+            var learningcity = await _ctx.Cities.AsNoTracking()
+                          .FirstAsync(x => x.CityID == request.LearningCity);
+            var scd = await _ctx.Districts.AsNoTracking()
+                          .FirstAsync(x => x.DistrictID == schoolsubject.District);
+            var scc = await _ctx.Cities.AsNoTracking()
+                          .FirstAsync(x => x.CityID == schoolsubject.City);
+            //var requestschedule = await _ctx.RequestSubjectSchedules.AsNoTracking()
+            //                                .Where(x => x.ScheduleID == request.RequestSchedules.)
+            string schooldistrict = scd.DistrictName;
+            string schoolcity = scc.CityName;
+            return new
+            {
+                request.Subject.Name,
+                studygroup.StudyGroupImage,
+                studygroup.StudyGroupName,
+                studyfield.StudyFieldName,
+                request.Description,
+                request.Price,
+                request.LearningAddress,
+                learningdistrict.DistrictName,
+                learningcity.CityName,
+                request.Students,
+                request.HomeWork,
+                request.Presentation,
+                request.Laboratory,
+                request.RequestDate,
+                request.Subject.Teacher,
+                schoolsubject.SchoolName,
+                schoolsubject.SchoolLogo,
+                schoolsubject.SchoolAddress,
+                schooldistrict,
+                schoolcity,
+                request.RequestSchedules,
+                request.PayMentTime
+            };
+        }
         [HttpPost]
         public async Task<IActionResult> CreateCollegeSubjectRequest([FromBody] CreateRequest request)
         {
@@ -152,59 +205,6 @@ namespace GiaSuSystem.Models.Actions
                              SchoolName = m.SchoolName
                          };
             return Ok(await result.AsNoTracking().ToListAsync());
-        }
-        [AllowAnonymous]
-        [HttpGet("{id}")]
-        public async Task<Object> RequestCollegeSubjectDetail(int id)
-        {
-            //Object type will return null, remember to include all of them
-            var request = await _ctx.RequestSubjects.AsNoTracking()
-                        .Include(x => x.Students)
-                        .Include(z => z.Subject)
-                        .Include(y => y.RequestSchedules)
-                        .FirstOrDefaultAsync(z => z.RequestID == id);
-            var schoolsubject = await _ctx.Schools.AsNoTracking()
-                                      .FirstAsync(x => x.SchoolID == request.Subject.SchoolID);
-            var studygroup = await _ctx.StudyGroups.AsNoTracking()
-                          .FirstAsync(x => x.StudyGroupID == request.Subject.StudyGroupID);
-            var studyfield = await _ctx.StudyFields.AsNoTracking()
-                          .FirstAsync(x => x.StudyFieldID == request.Subject.StudyFieldID);
-            var learningdistrict = await _ctx.Districts.AsNoTracking()
-                          .FirstAsync(x => x.DistrictID == request.LearningDistrict);
-            var learningcity = await _ctx.Cities.AsNoTracking()
-                          .FirstAsync(x => x.CityID == request.LearningCity);
-            var scd = await _ctx.Districts.AsNoTracking()
-                          .FirstAsync(x => x.DistrictID == schoolsubject.District);
-            var scc = await _ctx.Cities.AsNoTracking()
-                          .FirstAsync(x => x.CityID == schoolsubject.City);
-            //var requestschedule = await _ctx.RequestSubjectSchedules.AsNoTracking()
-            //                                .Where(x => x.ScheduleID == request.RequestSchedules.)
-            string schooldistrict = scd.DistrictName;
-            string schoolcity = scc.CityName;
-            return new
-            {
-                request.Subject.Name,
-                studygroup.StudyGroupImage,
-                studygroup.StudyGroupName,
-                studyfield.StudyFieldName,
-                request.Description,
-                request.Price,
-                request.LearningAddress,
-                learningdistrict.DistrictName,
-                learningcity.CityName,
-                request.Students,
-                request.HomeWork,
-                request.Presentation,
-                request.Laboratory,
-                request.RequestDate,
-                request.Subject.Teacher,
-                schoolsubject.SchoolName,
-                schoolsubject.SchoolLogo,
-                schoolsubject.SchoolAddress,
-                schooldistrict,schoolcity,
-                request.RequestSchedules,
-                request.PayMentTime
-            };
         }
         [AllowAnonymous]
         [HttpGet]
