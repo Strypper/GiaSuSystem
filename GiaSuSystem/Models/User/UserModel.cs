@@ -1,4 +1,5 @@
-﻿using GiaSuSystem.Models.MMTables;
+﻿using GiaSuSystem.Models.EducationSystem;
+using GiaSuSystem.Models.MMTables;
 using GiaSuSystem.Models.Subjects;
 using Microsoft.AspNetCore.Identity;
 using System;
@@ -41,9 +42,9 @@ namespace GiaSuSystem.Models.User
         [ForeignKey("DistrictID")]
         public int UserDistrict { get; set; }
         [ForeignKey("StudyGroupID")]
-        public int StudyGroupID { get; set; }
+        public StudyGroup StudyGroup { get; set; }
         [ForeignKey("StudyFieldID")]
-        public int StudyFieldID { get; set; }
+        public StudyField StudyField { get; set; }
         public virtual ICollection<UserModelRequestSubject> UserSubjectRequests { get; set; }
         [ForeignKey("SchoolID")]
         public int SchoolID { get; set; }

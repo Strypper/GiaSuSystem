@@ -32,8 +32,8 @@ namespace GiaSuSystem.Controllers.College
                          select new
                          {
                              TutorID = Tutor.Id,
-                             TutorStudyGroup = Tutor.StudyGroupID,
-                             TutorStudyField = Tutor.StudyFieldID,
+                             TutorStudyGroup = Tutor.StudyGroup.StudyGroupName,
+                             TutorStudyField = Tutor.StudyField.StudyFieldName,
                              ProfileUrlImage = Tutor.ProfileImageUrl,
                              Firstname = Tutor.FirstName,
                              Lastname = Tutor.LastName,
@@ -47,13 +47,13 @@ namespace GiaSuSystem.Controllers.College
         public async Task<Object> RequestCollegeTutorDetail(int id)
         {
             var tutordetail = await _ctx.Users.AsNoTracking()
-                        .FirstOrDefaultAsync(x => x.Id == id);
+                                    .FirstOrDefaultAsync(x => x.Id == id);
             var school = await _ctx.Schools.AsNoTracking()
-                                      .FirstAsync(x => x.SchoolID == tutordetail.SchoolID);
+                               .FirstAsync(x => x.SchoolID == tutordetail.SchoolID);
             var studygroup = await _ctx.StudyGroups.AsNoTracking()
-                          .FirstAsync(x => x.StudyGroupID == tutordetail.StudyGroupID);
+                          .FirstAsync(x => x.StudyGroupID == tutordetail.StudyGroup.StudyGroupID);
             var studyfield = await _ctx.StudyFields.AsNoTracking()
-                          .FirstAsync(x => x.StudyFieldID == tutordetail.StudyFieldID);
+                          .FirstAsync(x => x.StudyFieldID == tutordetail.StudyField.StudyFieldID);
             var scd = await _ctx.Districts.AsNoTracking()
                           .FirstAsync(x => x.DistrictID == school.District);
             var scc = await _ctx.Cities.AsNoTracking()

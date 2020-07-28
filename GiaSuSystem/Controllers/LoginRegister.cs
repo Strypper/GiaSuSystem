@@ -114,8 +114,8 @@ namespace GiaSuSystem.Controllers
                 UserCity = u.City,
                 ProfileImageUrl = u.ProfileImageUrl,
                 SchoolID = _Sc.SchoolID,
-                StudyGroupID = u.StudyGroup,
-                StudyFieldID = u.StudyField
+                //StudyGroup = u.StudyGroup,
+                //StudyField = u.StudyField
             };
             var result = await _userManager.CreateAsync(user, u.Pass);
             await _userManager.AddToRoleAsync(user, u.Role);
