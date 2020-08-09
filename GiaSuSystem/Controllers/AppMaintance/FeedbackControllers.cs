@@ -33,7 +33,9 @@ namespace GiaSuSystem.Controllers.AppMaintance
                                   Title = x.Title,
                                   Detail = x.Detail,
                                   UserID = x.Owner.Id,
-                                  UserName = x.Owner.FirstName
+                                  UserName = x.Owner.FirstName,
+                                  Platform = x.Platform,
+                                  TimeUpload = x.TimeUpload,
                               });
             return await request.ToListAsync();
         }

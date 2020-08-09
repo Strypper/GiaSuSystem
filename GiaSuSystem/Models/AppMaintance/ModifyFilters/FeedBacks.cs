@@ -12,5 +12,7 @@ namespace GiaSuSystem.Models.AppMaintance.ModifyFilters
         public string Detail { get; set; }
         public int UserID { get; set; }
         public string UserName { get; set; }
+        public string Platform { get; set; }
+        public DateTime TimeUpload { get; set; }
     }
 }

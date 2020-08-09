@@ -141,3 +141,4 @@ C:\Users\ocgrb\source\repos\GiaSuSystem\GiaSuSystem\obj\Debug\netcoreapp3.1\GiaS
 C:\Users\ocgrb\source\repos\GiaSuSystem\GiaSuSystem\obj\Debug\netcoreapp3.1\GiaSuSystem.genruntimeconfig.cache
 C:\Users\ocgrb\source\repos\GiaSuSystem\GiaSuSystem\bin\Debug\netcoreapp3.1\System.Collections.Immutable.dll
 C:\Users\ocgrb\source\repos\GiaSuSystem\GiaSuSystem\bin\Debug\netcoreapp3.1\System.Diagnostics.DiagnosticSource.dll
+C:\Users\ocgrb\source\repos\GiaSuSystem\GiaSuSystem\obj\Debug\netcoreapp3.1\GiaSuSystem.csprojAssemblyReference.cache

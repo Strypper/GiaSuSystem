@@ -73,6 +73,7 @@ namespace GiaSuSystem.Models.College
             var request = await _ctx.RequestSubjects.AsNoTracking()
                         .Include(x => x.Students)
                         .Include(z => z.Subject)
+                        .Include(y => y.Owner)
                         .Include(y => y.RequestSchedules)
                         .FirstOrDefaultAsync(z => z.RequestID == id);
             var schoolsubject = await _ctx.Schools.AsNoTracking()
@@ -95,6 +96,8 @@ namespace GiaSuSystem.Models.College
             string schoolcity = scc.CityName;
             return new
             {
+                request.Owner.FirstName,
+                request.Owner.ProfileImageUrl,
                 request.Subject.Name,
                 studygroup.StudyGroupImage,
                 studygroup.StudyGroupName,
